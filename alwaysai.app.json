@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "start": "python app.py"
+  },
+  "models": {
+    "sheshalwaysai/yolo_v3_xavier_nx": 1
+  }
+}
