@@ -15,8 +15,8 @@ def main():
     fps = edgeiq.FPS()
 
     try:
-        with edgeiq.FileVideoStream('videos/sample1.mp4') as video_stream0, \
-                edgeiq.FileVideoStream('videos/sample2.mp4') as video_stream1, \
+        with edgeiq.FileVideoStream('videos/sample1.mp4') as video_stream0,\
+                edgeiq.FileVideoStream('videos/sample2.mp4') as video_stream1,\
                 edgeiq.Streamer(port=5000) as streamer:
             # Allow Webcam to warm up
             time.sleep(2.0)
@@ -28,23 +28,26 @@ def main():
                 frame1 = video_stream1.read()
                 frames = [frame0, frame1, frame0, frame1]
 
-                results = obj_detect.detect_objects_batch(frames, confidence_level=.1)
+                results = obj_detect.detect_objects_batch(frames,
+                                                          confidence_level=.1)
 
                 # Generate text to display on streamer
                 text = ["Model: {}".format(obj_detect.model_id)]
                 text.append(
-                        "Inference time: {:1.3f} s".format(results[0].duration))
+                    "Inference time: {:1.3f} s".format(results[0].duration))
                 text.append("Objects:")
 
-                # Loop for markup of images with corresponding detections and text generation
+                # Loop for markup of images with corresponding detections
+                # and text generation
                 for index in range(len(frames)):
-                        text.append("Results-{}".format(index))
-                        frames[index] = edgeiq.markup_image(
-                                frames[index], results[index].predictions, colors=obj_detect.colors)
+                    text.append("Results-{}".format(index))
+                    frames[index] = edgeiq.markup_image(
+                        frames[index], results[index].predictions,
+                        colors=obj_detect.colors)
 
-                        for prediction in results[index].predictions:
-                                text.append("{}: {:2.2f}%".format(
-                                        prediction.label, prediction.confidence * 100))
+                    for prediction in results[index].predictions:
+                        text.append("{}: {:2.2f}%".format(
+                                prediction.label, prediction.confidence * 100))
 
                 streamer.send_data(np.vstack(frames), text)
 
