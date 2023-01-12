@@ -1,4 +1,4 @@
-# Object Detector
+# Object Detector TensorRT batch mode
 Use [Object Detection](https://alwaysai.co/docs/application_development/core_computer_vision_services.html#object-detection) to detect objects in a video in batch mode. The types of objects detected can be changed by selecting different models.
 
 ## Requirements
