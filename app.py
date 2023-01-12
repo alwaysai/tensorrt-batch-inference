@@ -4,7 +4,7 @@ import numpy as np
 
 
 def main():
-    obj_detect = edgeiq.ObjectDetection("sheshalwaysai/yolo_v3_xavier_nx")
+    obj_detect = edgeiq.ObjectDetection("alwaysai/yolo_v3_xavier_nx_batch4")
     obj_detect.load(engine=edgeiq.Engine.TENSOR_RT)
 
     print("Loaded model:\n{}\n".format(obj_detect.model_id))
@@ -15,8 +15,9 @@ def main():
     fps = edgeiq.FPS()
 
     try:
-        with edgeiq.FileVideoStream('videos/sample.mkv') as video_stream0, \
-                edgeiq.Streamer(port=5005) as streamer:
+        with edgeiq.FileVideoStream('videos/sample1.mp4') as video_stream0, \
+                edgeiq.FileVideoStream('videos/sample2.mp4') as video_stream1, \
+                edgeiq.Streamer(port=5000) as streamer:
             # Allow Webcam to warm up
             time.sleep(2.0)
             fps.start()
@@ -24,7 +25,8 @@ def main():
             # loop detection
             while True:
                 frame0 = video_stream0.read()
-                frames = [frame0, frame0, frame0, frame0]
+                frame1 = video_stream1.read()
+                frames = [frame0, frame1, frame0, frame1]
 
                 results = obj_detect.detect_objects_batch(frames, confidence_level=.1)
 
