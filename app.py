@@ -15,8 +15,8 @@ def main():
     fps = edgeiq.FPS()
 
     try:
-        with edgeiq.FileVideoStream('videos/sample1.mp4') as video_stream0,\
-                edgeiq.FileVideoStream('videos/sample2.mp4') as video_stream1,\
+        with edgeiq.FileVideoStream('videos/sample1.mp4') as video_stream0, \
+                edgeiq.FileVideoStream('videos/sample2.mp4') as video_stream1, \
                 edgeiq.Streamer(port=5000) as streamer:
             # Allow Webcam to warm up
             time.sleep(2.0)
