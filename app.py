@@ -1,6 +1,27 @@
 import time
+from typing import List
 import edgeiq
 import numpy as np
+
+
+def stack_frames(marked_frames: List[np.ndarray]) -> np.ndarray:
+    """
+    Stack frames in the following arrangement:
+
+    |  cam1  |  cam2  |
+    |  cam3  |  cam4  |
+    """
+    stacked_frames: List[np.ndarray] = []
+    for i in range(0, len(marked_frames), 2):
+        if i + 1 < len(marked_frames):
+            stacked_frames.append(np.hstack(marked_frames[i:i + 2]))
+        else:
+            # Handle odd number of streams
+            last_frame = marked_frames[i]
+            black_frame = np.zeros_like(last_frame)
+            stacked_frames.append(np.hstack((last_frame, black_frame)))
+
+    return np.vstack(stacked_frames)
 
 
 def main():
@@ -17,7 +38,7 @@ def main():
     try:
         with edgeiq.FileVideoStream('videos/sample1.mp4') as video_stream0, \
                 edgeiq.FileVideoStream('videos/sample2.mp4') as video_stream1, \
-                edgeiq.Streamer(port=5000) as streamer:
+                edgeiq.Streamer(max_image_width=1080, max_image_height=760) as streamer:
             # Allow Webcam to warm up
             time.sleep(2.0)
             fps.start()
@@ -49,7 +70,7 @@ def main():
                         text.append("{}: {:2.2f}%".format(
                                 prediction.label, prediction.confidence * 100))
 
-                streamer.send_data(np.vstack(frames), text)
+                streamer.send_data(stack_frames(frames), text)
 
                 fps.update()
 
